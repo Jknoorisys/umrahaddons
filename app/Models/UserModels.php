@@ -40,10 +40,10 @@ class UserModels extends Model
 		$query .= $criterial;
 
 		if ($abc == 0) {
-			$query .= " ORDER BY l.created_at DESC";
+			$query .= " ORDER BY l.created_date DESC";
 			return $this->db->query($query)->getResult();
 		} else {
-			$query .= " ORDER BY l.created_at DESC LIMIT " . $page_no . "," . $per_page;
+			$query .= " ORDER BY l.created_date DESC LIMIT " . $page_no . "," . $per_page;
 			return $this->db->query($query)->getResult();
 		}
 		return false;

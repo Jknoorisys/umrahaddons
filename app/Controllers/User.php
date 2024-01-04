@@ -311,7 +311,7 @@ class User extends ResourceController
             $builder = $db->table('tbl_booking as b');
             $builder->select("b.*");
 
-            if ($packageData && $packageData['service_type'] == 'group') {
+            if ($packageData && $packageData['package_type'] == 'group') {
                 $builder->join('tbl_pax_master as pax', 'pax.id  = b.no_of_pox');
                 $builder->join('tbl_vehicle_master as vec', 'vec.id  = b.cars');
                 $builder->select("pax.name as pax_name,vec.name as vec_name");

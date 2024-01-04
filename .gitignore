@@ -130,3 +130,6 @@ nb-configuration.xml
 # config
 app/Config/Database.php
 app/Config/App.php
+
+# public
+public/assets/*

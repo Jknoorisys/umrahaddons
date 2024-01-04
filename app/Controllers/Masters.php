@@ -129,7 +129,7 @@ class Masters extends ResourceController
                     }
                 } else {
                     if($app_ver < $app_version->app_version_ios) {
-                        if($app_version->forcefully_update_android == 1) 
+                        if($app_version->forcefully_update_ios == 1) 
                         {
                             return $service->success([
                                 'message'       =>  Lang('Language.New application version is available, please update to continue.'),

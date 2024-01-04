@@ -38,8 +38,8 @@ class PackageModels extends Model
 		// 	$query = "SELECT l.*,c.firstname AS country_name, FROM tbl_package AS l
 		//    LEFT JOIN tbl_provider AS c ON c.id = l.provider_id ";
 
-		$query .= "ORDER BY l.created_date DESC";
 		$query .= "WHERE 1";
+		$query .= " ORDER BY l.created_date DESC";
 		$query .= $criterial;
 
 		if ($abc == 0) {

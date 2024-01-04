@@ -37,7 +37,7 @@ class UserModels extends Model
 
 
 		$query .= "WHERE 1";
-		$query .= " ORDER BY l.created_at DESC";
+		$query .= " ORDER BY l.created_date DESC";
 		$query .= $criterial;
 
 		if ($abc == 0) {

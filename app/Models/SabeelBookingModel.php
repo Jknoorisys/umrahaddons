@@ -19,7 +19,7 @@ class SabeelBookingModel extends Model
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
+    protected $createdField  = 'created_date';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 

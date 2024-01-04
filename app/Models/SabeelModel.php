@@ -19,8 +19,8 @@ class SabeelModel extends Model
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
+    protected $createdField  = 'created_date';
+    protected $updatedField  = 'updated_date';
     protected $deletedField  = 'deleted_at';
 
     // Validation

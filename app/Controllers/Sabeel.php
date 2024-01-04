@@ -1670,6 +1670,7 @@ class Sabeel extends BaseController
                     'provider_payment_status' => 'pending',
                     'session_id' => '',
                     'checkout_id' => 'COD',
+                    'created_date' => date('Y-m-d H:i:s'),
                 ];
 
                 if ($bookingModel->insert($inprocessbooking)) {

@@ -51,7 +51,6 @@ class PackageModels extends Model
 		return false;
 	}
 
-
 	// list of provider packages for provider 
 	public function getproviderpackage(array $trnx_filters, $per_page, $page_no, $add_filter, $abc, $provider_id)
 	{

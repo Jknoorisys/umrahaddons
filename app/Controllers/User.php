@@ -270,6 +270,7 @@ class User extends ResourceController
         $ImagePackageModels = new ImagePackageModels();
         $MovmentModels = new MovmentModels();
         $DayMappingModel = new DayMappingModel();
+        $PackageModels = new PackageModels();
 
 
         $logged_user_id = $this->request->getPost("logged_user_id");
@@ -301,17 +302,23 @@ class User extends ResourceController
 
         if ($logged_user_role == 'user') {
             $bookingdatas = $BookingModel->where("id", $booking_id)->first();
+            $package_id = $bookingdatas['service_id'];
+
+            $packageData = $PackageModels->where("id", $package_id)->first();
 
             // Booing data
             $db = \Config\Database::connect();
             $builder = $db->table('tbl_booking as b');
-            $builder->select("b.*,pax.name as pax_name,vec.name as vec_name");
-            $builder->join('tbl_pax_master as pax', 'pax.id  = b.no_of_pox');
-            $builder->join('tbl_vehicle_master as vec', 'vec.id  = b.cars');
+            $builder->select("b.*");
+
+            if ($packageData && $packageData['service_type'] == 'group') {
+                $builder->join('tbl_pax_master as pax', 'pax.id  = b.no_of_pox');
+                $builder->join('tbl_vehicle_master as vec', 'vec.id  = b.cars');
+                $builder->select("pax.name as pax_name,vec.name as vec_name");
+            }
+            
             $builder->where('b.id', $booking_id);
             $bookingdata = $builder->get()->getResult();
-            $package_id = $bookingdatas['service_id'];
-            // echo json_encode($package_id);die();
 
             // package data
             $db = \Config\Database::connect();

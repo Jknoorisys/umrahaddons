@@ -1370,10 +1370,6 @@ class Admin extends ResourceController
 	// View detail of of package  by admin
 	public function getPackageDetailsByAdmin()
 	{
-		$AdminModel = new AdminModel();
-		$ProviderModel = new ProviderModel();
-		$OtaMoodel = new OtaMoodel();
-		$UserModels = new UserModels();
 		$PackageModels = new PackageModels();
 		$MovmentModels = new MovmentModels();
 		$ImagePackageModels = new ImagePackageModels();
@@ -1393,19 +1389,22 @@ class Admin extends ResourceController
 		}
 
 		$packagedata = $PackageModels->where("id", $package_id)->first();
-		if (!empty($userdata)) {
+		if (!empty($userdata) && !empty($packagedata)) {
 			$image_data =  $ImagePackageModels->where("package_id", $package_id)->findAll();
 			$points = explode(',',$packagedata['ziyarat_points']);
 			$ziyarat_points = $ZiyaratPoints->whereIn('id',$points)->select('id, title_en, name_en')->findAll();
 
 			$db = \Config\Database::connect();
 
-			// $Vehicle_data =  $VehicleModels->where("package_id", $package_id)->findAll();
 			$builder = $db->table('tbl_package_vehicle as pv');
-            $builder->select('pv.*,pax.name as pax_name,vech.name as vehicle_name');
-            $builder->join('tbl_pax_master as pax', 'pax.id  = pv.no_of_pox_id');
-            $builder->join('tbl_vehicle_master as vech', 'vech.id  = pv.vehicle_id');
-			$builder->join('tbl_ziyarat_points as point', 'point.id  = pv.vehicle_id');
+            $builder->select('pv.*');
+
+			if ($packagedata['package_type'] == "group") {
+				$builder->join('tbl_pax_master as pax', 'pax.id  = pv.no_of_pox_id');
+				$builder->join('tbl_vehicle_master as vech', 'vech.id  = pv.vehicle_id');
+				$builder->select('pax.name as pax_name,vech.name as vehicle_name');
+			}
+           
             $builder->where('pv.package_id', $package_id);
             $builder->where('pv.status', 'active');
             $Vehicle_data = $builder->get()->getResult();

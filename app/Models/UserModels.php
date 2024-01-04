@@ -12,11 +12,10 @@ class UserModels extends Model
 	protected $createdField  = 'created_date';
   	protected $updatedField  = 'updated_date';
 
-	  public function getallTransactionlist(array $trnx_filters, $per_page, $page_no, $add_filter, $abc)
+	public function getallTransactionlist(array $trnx_filters, $per_page, $page_no, $add_filter, $abc)
 	{
 
 		$criterial = '';
-		// echo json_encode($trnx_filters);die(); 
 		if (isset($trnx_filters['firstname']) && $trnx_filters['firstname'] != "") {
 			$criterial .= " AND l.firstname LIKE '%" . $trnx_filters['firstname'] . "%'";
 		}
@@ -34,10 +33,11 @@ class UserModels extends Model
 		}
 
 		$query = "SELECT l.*,c.name AS country_name,s.name AS state_name,ci.name AS city_name FROM tbl_user AS l
-       LEFT JOIN countries AS c ON c.id = l.country LEFT JOIN states AS s ON s.id = l.state LEFT JOIN cities AS ci ON ci.id = l.city ";
+        LEFT JOIN countries AS c ON c.id = l.country LEFT JOIN states AS s ON s.id = l.state LEFT JOIN cities AS ci ON ci.id = l.city ";
 
 
 		$query .= "WHERE 1";
+		$query .= " ORDER BY l.created_at DESC";
 		$query .= $criterial;
 
 		if ($abc == 0) {
@@ -46,7 +46,6 @@ class UserModels extends Model
 			$query .= " LIMIT " . $page_no . "," . $per_page;
 			return $this->db->query($query)->getResult();
 		}
-		// echo json_encode($total_record);die();
 		return false;
 	}
 }

@@ -233,14 +233,12 @@ class ListFilter extends ResourceController
 		$UserModels = new UserModels();
 		$logged_user_role = $this->request->getPost('logged_user_role');
 		$logged_user_id = $this->request->getPost('logged_user_id');
-		// $user_role = $this->request->getPost('user_role');
 		$add_filter = $this->request->getPost('add_filter');
 
 		$pageNo = $this->request->getPost('page_no');
 		$per_page = PER_PAGE;
 		$currentPage   = ( !empty( $pageNo ) ) ? $pageNo : 1;
 		$page_no        = ( $currentPage - 1 ) * PER_PAGE;
-		// echo json_encode($user_id);die();
 
 		$filter['transfer']['firstname'] = '';
 		$filter['transfer']['lastname'] = '';
@@ -301,7 +299,6 @@ class ListFilter extends ResourceController
 		$PackageModels = new PackageModels();
 		$logged_user_role = $this->request->getPost('logged_user_role');
 		$logged_user_id = $this->request->getPost('logged_user_id');
-		// $user_role = $this->request->getPost('user_role');
 		$add_filter = $this->request->getPost('add_filter');
 
 		$pageNo = $this->request->getPost('page_no');
@@ -651,16 +648,16 @@ class ListFilter extends ResourceController
 				$builder1->select("l.*,CONCAT(c.firstname,' ',c.lastname) as provider_name,pa.package_title as package_name,pax.name as pax_name,vec.name as vec_name ");
 				$builder1->join('tbl_provider as c', 'c.id  = l.provider_id');
 				$builder1->join('tbl_package as pa', 'pa.id  = l.service_id');
-				$builder1->join('tbl_pax_master as pax', 'pax.id  = l.no_of_pox');
-				$builder1->join('tbl_vehicle_master as vec', 'vec.id  = l.cars');
+				// $builder1->join('tbl_pax_master as pax', 'pax.id = l.no_of_pox');
+				// $builder1->join('tbl_vehicle_master as vec', 'vec.id = l.cars');
+				$builder1->join('tbl_pax_master as pax', 'pax.id = l.no_of_pox', 'left')->where('pa.package_type', 'group');
+				$builder1->join('tbl_vehicle_master as vec', 'vec.id = l.cars', 'left')->where('pa.package_type', 'group');
 				$builder1->where('l.user_id', $logged_user_id);
 				$builder1->where('l.service_type', $service_type);
 				$total_loan_record = $builder1->get()->getResult();
 				$total_record = count($total_loan_record);
-				// echo json_encode($total_loan_record);die();
 			} else {
 				$total_record = count($countlist);
-				// echo json_encode($total_record);die();
 			}
 			if ($complaints != null) {
 
@@ -758,7 +755,6 @@ class ListFilter extends ResourceController
 		}
 		return $this->respondCreated($response);
 	}
-
 
 	// List of booking package by user 
 	public function listOfGuide()

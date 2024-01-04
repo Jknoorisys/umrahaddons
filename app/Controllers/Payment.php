@@ -31,6 +31,7 @@ require 'vendor/autoload.php';
 
 use App\Models\UserModels;
 use CodeIgniter\API\ResponseTrait;
+use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
 use \Firebase\JWT\JWT;
 
@@ -795,10 +796,30 @@ class Payment extends ResourceController
 	// COD PAYMENT - 14 OCT 2022 - RIZ
 	public function packageCodBooking()
 	{
-		// echo "YES"; exit;
+		$service           =  new Services();
+        $service->cors();
+
+		$rules = [
+            'rate' => [
+                'rules'         =>  'required',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                ]
+            ],
+        ];
+
+        if(!$this->validate($rules)) {
+            return $service->fail(
+                [
+                    'errors'     =>  $this->validator->getErrors(),
+                    'message'   =>  lang('Language.invalid_inputs')
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+
 		$ServiceCommisionModel = new ServiceCommisionModel();
-        $CheckoutModel = new CheckoutModel();
-        $UserModels = new UserModels();
         $PackageModels = new PackageModels();
         $BookingModel = new BookingModel();
         $VehicleModels = new VehicleModels();
@@ -840,7 +861,8 @@ class Payment extends ResourceController
 		$provider_id = $packagedata['provider_id'];
 
 		$car_data = $VehicleModels->where("id", $pax_id)->where("package_id", $service_id)->where("status", $active)->first();
-        $rate = (!empty($car_data['rate']))?$car_data['rate']:'0';
+        // $rate = (!empty($car_data['rate']))?$car_data['rate']:'0';
+		$rate = $this->request->getPost('rate');
         $no_of_pox = (!empty($car_data['no_of_pox_id']))?$car_data['no_of_pox_id']:'0';
         $cars = (!empty($car_data['vehicle_id']))?$car_data['vehicle_id']:'0';
 

@@ -229,13 +229,50 @@ class Bookings extends ResourceController
             try 
             {
               $db = db_connect();
-              $isExist = $db->table('tbl_booking as b')
-                ->select('b.*, p.package_title as package_name, p.main_img as img_url, CONCAT(u.firstname," ",u.lastname) as user_name, v.name as vehicle_type')
-                ->join('tbl_package as p','p.id = b.service_id')
-                ->join('tbl_user as u','u.id = b.user_id')
-                ->join('tbl_vehicle_master as v','v.id = b.cars')
-                ->where('b.id', $booking_id)
-                ->get()->getRowArray();
+              $bookingData = $db->table('tbl_booking as b')->where('b.id', $booking_id)->get()->getRowArray();
+              if (empty($bookingData)) {
+                return $service->fail(
+                    [
+                        'errors'    =>  "",
+                        'message'   =>  Lang('Language.Booking Not Found'),
+                    ],
+                    ResponseInterface::HTTP_BAD_REQUEST,
+                    $this->response
+                );
+              }
+
+              $packageData = $db->table('tbl_package as p')->where('p.id', $bookingData['service_id'])->get()->getRowArray();
+                if (empty($packageData)) {
+                    return $service->fail(
+                        [
+                            'errors'    =>  "",
+                            'message'   =>  Lang('Language.Package Not Found'),
+                        ],
+                        ResponseInterface::HTTP_BAD_REQUEST,
+                        $this->response
+                    );
+                }
+
+                $query = $db->table('tbl_booking as b')
+                            ->select('b.*, p.package_title as package_name, p.main_img as img_url, CONCAT(u.firstname," ",u.lastname) as user_name')
+                            ->join('tbl_package as p', 'p.id = b.service_id')
+                            ->join('tbl_user as u', 'u.id = b.user_id')
+                            ->where('b.id', $booking_id);
+
+                            if ($packageData['package_type'] == 'group') {
+                                $query->join('tbl_vehicle_master as v', 'v.id = b.cars');
+                                $query->select('v.name as vehicle_type');
+                            }
+                            
+                            $isExist = $query->get()->getRowArray();
+              
+            //   $isExist = $db->table('tbl_booking as b')
+            //     ->select('b.*, p.package_title as package_name, p.main_img as img_url, CONCAT(u.firstname," ",u.lastname) as user_name, v.name as vehicle_type')
+            //     ->join('tbl_package as p','p.id = b.service_id')
+            //     ->join('tbl_user as u','u.id = b.user_id')
+            //     ->join('tbl_vehicle_master as v','v.id = b.cars')
+            //     ->where('b.id', $booking_id)
+            //     ->get()->getRowArray();
               
                 if($user_role=='admin' OR $user_role=='ota'){
                   $isExist['provider_details'] = $db->table('tbl_provider')->select('*')->where('id', $isExist['provider_id'])->get()->getRowArray();

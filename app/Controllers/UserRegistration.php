@@ -2,11 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Database\Migrations\TblTransportEnquiry;
 use App\Models\OtaMoodel;
-use App\Models\ProviderModel;
 use App\Models\UserModels;
-use App\Models\AdminModel;
 use App\Models\PackageModels;
 use App\Models\BookingModel;
 use App\Models\CountryModel;
@@ -18,20 +15,12 @@ use App\Models\VehicleMasterModel;
 use App\Models\PaxMasaterModel;
 use App\Models\GuideModel;
 use App\Models\GuideDocModel;
-// use App\Libraries\MailSender;
 use App\Libraries\MailSender;
 
 use App\Models\StateModel;
 
 use App\Models\City;
-use App\Models\FullPackageEnquiry;
-use App\Models\MealsBookingModel;
-use App\Models\PackageInquiryModel;
-use App\Models\SabeelBookingModel;
-use App\Models\TransportModel;
-use App\Models\VisaEnquiry;
 use App\Models\ZiyaratPoints;
-use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\HTTP\ResponseInterface;
 use \Firebase\JWT\JWT;
@@ -265,9 +254,6 @@ class UserRegistration extends ResourceController
             die();
         }
 
-
-
-
         // Package Validation
         $packagedata = $PackageModels->where("id", $package_id)->where("status_by_admin", $active)->where("status", $active)->first();
         if (empty($packagedata)) {
@@ -291,15 +277,21 @@ class UserRegistration extends ResourceController
         // $Vehicle_data =  $VehicleModels->where("package_id", $package_id)->findAll();
         // $Movment_data =  $MovmentModels->where("package_id", $package_id)->findAll();
         $Movment_data =  $MovmentModels->where("package_id", $package_id)->findAll();
+
         // fetching record of  Vechile  data
         $builder = $db->table('tbl_package_vehicle as pv');
-        $builder->select('pv.*,pax.name as pax_name,pax.min_pax,pax.max_pax,vech.name as vech_name');
-        $builder->join('tbl_pax_master as pax', 'pax.id  = pv.no_of_pox_id');
-        $builder->join('tbl_vehicle_master as vech', 'vech.id  = pv.vehicle_id');
+        $builder->select('pv.*');
+
+        if ($packagedata['package_type'] == 'group') {
+            $builder->join('tbl_pax_master as pax', 'pax.id  = pv.no_of_pox_id');
+            $builder->join('tbl_vehicle_master as vech', 'vech.id  = pv.vehicle_id');
+            $builder->select('pax.name as pax_name,pax.min_pax,pax.max_pax,vech.name as vech_name');
+        }
+       
         $builder->where('pv.package_id', $package_id);
         $builder->where('pv.status', 'active');
         $Vehicle_data = $builder->get()->getResult();
-        // echo json_encode($Movment_data);die();
+        
         foreach ($Movment_data as $key => $value) {
             $inventatory_detail = $DayMappingModel->where('movement_id', $value['id'])->where('package_id', $value['package_id'])->findAll();
 

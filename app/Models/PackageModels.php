@@ -39,13 +39,13 @@ class PackageModels extends Model
 		//    LEFT JOIN tbl_provider AS c ON c.id = l.provider_id ";
 
 		$query .= "WHERE 1";
-		$query .= " ORDER BY l.created_date DESC";
 		$query .= $criterial;
 
 		if ($abc == 0) {
+			$query .= " ORDER BY l.created_date DESC";
 			return $this->db->query($query)->getResult();
 		} else {
-			$query .= " LIMIT " . $page_no . "," . $per_page;
+			$query .= " ORDER BY l.created_date DESC LIMIT " . $page_no . "," . $per_page;
 			return $this->db->query($query)->getResult();
 		}
 		// echo json_encode($total_record);die();

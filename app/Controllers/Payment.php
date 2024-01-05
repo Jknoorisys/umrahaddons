@@ -799,25 +799,25 @@ class Payment extends ResourceController
 		$service           =  new Services();
         $service->cors();
 
-		$rules = [
-            'rate' => [
-                'rules'         =>  'required',
-                'errors'        => [
-                    'required'      =>  Lang('Language.required'),
-                ]
-            ],
-        ];
+		// $rules = [
+        //     'rate' => [
+        //         'rules'         =>  'required',
+        //         'errors'        => [
+        //             'required'      =>  Lang('Language.required'),
+        //         ]
+        //     ],
+        // ];
 
-        if(!$this->validate($rules)) {
-            return $service->fail(
-                [
-                    'errors'     =>  $this->validator->getErrors(),
-                    'message'   =>  lang('Language.invalid_inputs')
-                ],
-                ResponseInterface::HTTP_BAD_REQUEST,
-                $this->response
-            );
-        }
+        // if(!$this->validate($rules)) {
+        //     return $service->fail(
+        //         [
+        //             'errors'     =>  $this->validator->getErrors(),
+        //             'message'   =>  lang('Language.invalid_inputs')
+        //         ],
+        //         ResponseInterface::HTTP_BAD_REQUEST,
+        //         $this->response
+        //     );
+        // }
 
 		$ServiceCommisionModel = new ServiceCommisionModel();
         $PackageModels = new PackageModels();
@@ -859,10 +859,10 @@ class Payment extends ResourceController
         }
 
 		$provider_id = $packagedata['provider_id'];
+		$inputRate = $this->request->getPost('rate');
 
 		$car_data = $VehicleModels->where("id", $pax_id)->where("package_id", $service_id)->where("status", $active)->first();
-        // $rate = (!empty($car_data['rate']))?$car_data['rate']:'0';
-		$rate = $this->request->getPost('rate');
+        $rate = $inputRate ? $inputRate : ((!empty($car_data['rate']))?$car_data['rate']:'0');
         $no_of_pox = (!empty($car_data['no_of_pox_id']))?$car_data['no_of_pox_id']:'0';
         $cars = (!empty($car_data['vehicle_id']))?$car_data['vehicle_id']:'0';
 

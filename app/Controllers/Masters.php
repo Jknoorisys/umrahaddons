@@ -41,7 +41,6 @@ class Masters extends ResourceController
                     $packageDuration = $db->table('tbl_package_duration')
                         ->select('id, duration')
                         ->where('status','1')
-                        ->orderBy('duration')
                         ->get()->getResult();
                     if(!empty($packageDuration))
                     {

@@ -316,7 +316,6 @@ class Dashboard extends ResourceController
 
         $builder = $db->table('tbl_not_included_master');
         $builder->select('*');
-        $builder->orderBy('name');
         $includeddata = $builder->get()->getResult();
 
 

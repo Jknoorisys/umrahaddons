@@ -1084,6 +1084,13 @@ class Admin extends ResourceController
 				$status = ($status != "active") ? "inactive" : "active";
 				$res = $PackageModels->update($package_id, ['status_by_admin' => $status]);
 				if ($res) {
+					if ($status != "active") {
+						$db = db_connect();
+                        $delete = $db->table('tbl_landing_page_banners')
+                            ->where('package_id', $package_id)
+                            ->set('status', 'inactive')
+                            ->update();
+					}
 					$response = [
 						'status' => 'success',
 						'status_code' => 200,

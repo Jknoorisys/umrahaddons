@@ -12,6 +12,7 @@ use App\Models\MealsMenuModel;
 use App\Models\MealsModel;
 use App\Models\SabeelModel;
 use CodeIgniter\API\ResponseTrait;
+use App\Models\LandingPageBanners;
 use \Firebase\JWT\JWT;
 
 use Exception;
@@ -707,6 +708,7 @@ class AdminAsProvider extends BaseController
         $service   =  new Services();
         $package     = new PackageModels();
         $ProviderModel     = new ProviderModel();
+        $bannerModel    =  new LandingPageBanners();
         $service->cors();
         $package_id       =  $this->request->getVar('package_id');
         $provider_id       =  $this->request->getVar('provider_id');
@@ -779,6 +781,13 @@ class AdminAsProvider extends BaseController
                  if(!empty($isExist))
                  {
                     $update = $package->update($package_id, ['status' => 'inactive']);
+                    if ($update) {
+                        $db = db_connect();
+                        $delete = $db->table('tbl_landing_page_banners')
+                            ->where('package_id', $package_id)
+                            ->set('status', 'deleted')
+                            ->update();
+                    }
                     return $service->success([
                         'message'       =>  Lang('Language.delete_success'),
                         'data'          =>  ''

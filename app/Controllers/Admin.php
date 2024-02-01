@@ -1090,6 +1090,12 @@ class Admin extends ResourceController
                             ->where('package_id', $package_id)
                             ->set('status', 'inactive')
                             ->update();
+					} else {
+						$db = db_connect();
+						$delete = $db->table('tbl_landing_page_banners')
+							->where('package_id', $package_id)
+							->set('status', 'active')
+							->update();
 					}
 					$response = [
 						'status' => 'success',

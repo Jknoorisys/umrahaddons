@@ -1028,11 +1028,12 @@ class UserLists extends BaseController
             $table = $db->table('tbl_package as p')->where('p.status', 'active')->where('p.status_by_admin', 'active');
 
             if (isset($search) && !empty($search)) {
-                $table->like('p.package_title', $search);
-                // $table->orLike('p.package_details', $search);
-                $table->orLike('p.city_loaction', $search);
-                $table->orLike('p.pickup_loaction', $search);
-                $table->orLike('p.drop_loaction', $search);
+                $table->groupStart()
+                    ->like('p.package_title', $search)
+                    ->orLike('p.city_loaction', $search)
+                    ->orLike('p.pickup_loaction', $search)
+                    ->orLike('p.drop_loaction', $search)
+                    ->groupEnd();
             }
 
             $totalBuilder = clone $table;

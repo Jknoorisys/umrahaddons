@@ -153,7 +153,7 @@ class PackageModels extends Model
 		$criteria = '';
 
 		if (isset($trnx_filters['search_word']) && $trnx_filters['search_word'] != "") {
-			$criteria .= " AND (l.package_title LIKE '%" . $trnx_filters['search_word'] . "%' OR l.city_loaction LIKE '%" . $trnx_filters['search_word'] . "%')";
+			$criteria .= " AND ((l.package_title LIKE '%" . $trnx_filters['search_word'] . "%' OR l.city_loaction LIKE '%" . $trnx_filters['search_word'] . "%'))";
 		}
 
 		$criteria .= " AND l.status = 'active' AND l.status_by_admin = 'active'";
@@ -169,6 +169,7 @@ class PackageModels extends Model
 
 		return $query->get()->getResult();
 	}
+
 
 
 }

@@ -151,26 +151,27 @@ class PackageModels extends Model
 	public function getUserSearchPackage(array $trnx_filters, $per_page, $page_no, $add_filter, $abc, $active)
 	{
 		$criteria = '';
-
 		if (isset($trnx_filters['search_word']) && $trnx_filters['search_word'] != "") {
-			$criteria .= " AND ((l.package_title LIKE '%" . $trnx_filters['search_word'] . "%' OR l.city_loaction LIKE '%" . $trnx_filters['search_word'] . "%'))";
+			$criteria .= " AND (l.package_title LIKE '%" . $trnx_filters['search_word'] . "%' OR l.city_loaction LIKE '%" . $trnx_filters['search_word'] . "%')";
 		}
 
-		$criteria .= " AND l.status = 'active' AND l.status_by_admin = 'active'";
+		$criteria .= " AND l.status = 'active'";
+		$criteria .= " AND l.status_by_admin = 'active'";
 
-		$query = $this->db->table('tbl_package l')
-			->select('l.*, CONCAT(p.firstname, \' \', p.lastname) as provider_name')
-			->join('tbl_provider p', 'p.id = l.provider_id', 'left')
-			->where($criteria);
+		$query = "SELECT l.*, CONCAT(p.firstname, ' ', p.lastname) as provider_name FROM tbl_package AS l 
+				LEFT JOIN tbl_provider AS p ON p.id = l.provider_id";
+		
+		$query .= $criteria;
 
-		if ($abc != 0) {
-			$query->limit($per_page, $page_no);
+		if ($abc == 0) {
+			return $this->db->query($query)->getResult();
+		} else {
+			$query .= " LIMIT " . $page_no . "," . $per_page;
+			return $this->db->query($query)->getResult();
 		}
 
-		return $query->get()->getResult();
+		return false;
 	}
-
-
 
 }
 

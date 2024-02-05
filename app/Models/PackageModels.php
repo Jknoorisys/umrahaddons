@@ -148,25 +148,20 @@ class PackageModels extends Model
 	}
 
 	// Example for search in single line
-	public function getusersearchpackage(array $trnx_filters, $per_page, $page_no, $add_filter, $abc, $active)
+	public function getUserSearchPackage(array $trnx_filters, $per_page, $page_no, $add_filter, $abc, $active)
 	{
-
-		$criterial = '';
+		$criteria = '';
 		if (isset($trnx_filters['search_word']) && $trnx_filters['search_word'] != "") {
-			$criterial .= " AND l.package_title  LIKE'%" . $trnx_filters['search_word'] . "%'"."OR"." l.city_loaction  LIKE'%" . $trnx_filters['search_word'] . "%'";
+			$criteria .= " AND (l.package_title LIKE '%" . $trnx_filters['search_word'] . "%' OR l.city_loaction LIKE '%" . $trnx_filters['search_word'] . "%')";
 		}
 
-		$criterial .= " AND l.status = 'active'";
-		$criterial .= " AND l.status_by_admin = 'active'";
+		$criteria .= " AND l.status = 'active'";
+		$criteria .= " AND l.status_by_admin = 'active'";
 
-		$query = "SELECT l.*,CONCAT (p.firstname,' ',p.lastname) as provider_name FROM tbl_package AS l 
-			   LEFT JOIN tbl_provider AS p ON p.id = l.provider_id";
-
-		// 	$query = "SELECT l.*,c.firstname AS country_name, FROM tbl_package AS l
-		//    LEFT JOIN tbl_provider AS c ON c.id = l.provider_id ";
-
-		// $query .= "WHERE 1";
-		$query .= $criterial;
+		$query = "SELECT l.*, CONCAT(p.firstname, ' ', p.lastname) as provider_name FROM tbl_package AS l 
+				LEFT JOIN tbl_provider AS p ON p.id = l.provider_id";
+		
+		$query .= $criteria;
 
 		if ($abc == 0) {
 			return $this->db->query($query)->getResult();
@@ -174,9 +169,10 @@ class PackageModels extends Model
 			$query .= " LIMIT " . $page_no . "," . $per_page;
 			return $this->db->query($query)->getResult();
 		}
-		// echo json_encode($total_record);die();
+
 		return false;
 	}
+
 }
 
 /* End of file PackageModels.php */

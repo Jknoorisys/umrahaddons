@@ -529,6 +529,9 @@ class UserRegistration extends ResourceController
     // list of package   for customer 
     public function packageListSearchForUser()
     {
+        die(
+            'here'
+        );
         $UserModels = new UserModels();
         $PackageModels = new PackageModels();
         $page_no = $this->request->getPost('page_no');

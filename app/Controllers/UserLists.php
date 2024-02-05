@@ -1025,7 +1025,7 @@ class UserLists extends BaseController
             $search = $this->request->getVar('search');
 
             $db = db_connect();
-            $table = $db->table('tbl_package as p')->where('p.status', 'active')->where('status_by_admin', 'active');
+            $table = $db->table('tbl_package as p')->where('p.status', 'active')->where('p.status_by_admin', 'active');
 
             if (isset($search) && !empty($search)) {
                 $table->like('p.package_title', $search);

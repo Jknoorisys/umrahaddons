@@ -120,8 +120,10 @@ class ManageLandingPageBanners extends BaseController
             $table = $db->table('tbl_landing_page_banners as banner')->join('tbl_package as package','package.id = banner.package_id')->where('banner.status !=', 'deleted');
 
             if (isset($search) && !empty($search)) {
+                $table->groupStart();
                 $table->orLike('banner.title', $search);
-                $table->orLike('banner.description', $search);            
+                $table->orLike('banner.description', $search);  
+                $table->groupEnd();          
             }
             
             // Clone the builder to use for total count query

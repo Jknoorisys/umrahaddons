@@ -468,8 +468,10 @@ class FullPackage extends BaseController
             }
 
             if (isset($search_by_provider) && !empty($search_by_provider)) {
+                $table->groupStart();
                 $table->like('p.firstname', $search_by_provider);
                 $table->orLike('p.lastname', $search_by_provider);
+                $table->groupEnd();
             }
             
             // Clone the builder to use for total count query

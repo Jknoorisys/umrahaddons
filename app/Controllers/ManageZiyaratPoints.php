@@ -120,9 +120,11 @@ class ManageZiyaratPoints extends BaseController
             $table = $db->table('tbl_ziyarat_points as e')->join('tbl_city_master as s','s.id = e.city_id')->where('e.status !=', '2');
 
             if (isset($search) && !empty($search)) {
+                $table->groupStart();
                 $table->like('e.name_en', $search);
                 $table->orLike('e.title_en', $search);
                 $table->orLike('s.name', $search);
+                $table->groupEnd();
             }
             
             // Clone the builder to use for total count query

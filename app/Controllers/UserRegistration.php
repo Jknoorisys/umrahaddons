@@ -531,14 +531,10 @@ class UserRegistration extends ResourceController
     {
         $UserModels = new UserModels();
         $PackageModels = new PackageModels();
-        // $logged_user_id = $this->request->getPost("logged_user_id");
-        // $logged_user_role = $this->request->getPost("logged_user_role");
         $page_no = $this->request->getPost('page_no');
         $add_filter = $this->request->getPost('add_filter');
         $per_page = PER_PAGE;
         $active = "active";
-
-
 
         $filter['transfer']['search_word'] = '';
 
@@ -561,7 +557,7 @@ class UserRegistration extends ResourceController
             $builder1->where('l.status_by_admin ', $active);
             $total_loan_record = $builder1->get()->getResult();
             $total_record = count($total_loan_record);
-            // echo json_encode($total_loan_record);die();
+            
         } else {
             $total_record = count($countlist);
         }

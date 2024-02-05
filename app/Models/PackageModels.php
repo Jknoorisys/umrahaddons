@@ -151,19 +151,16 @@ class PackageModels extends Model
 	public function getusersearchpackage(array $trnx_filters, $per_page, $page_no, $add_filter, $abc, $active)
 	{
 
-		// echo json_encode($provider_id);die();
 		$criterial = '';
-		// echo json_encode($trnx_filters);die(); 
-		// if (isset($trnx_filters['search_word']) && $trnx_filters['search_word'] != "") {
-		// 	$criterial .= " AND l.package_title Like'%". "OR". "l.city_loaction LIKE'%" . $trnx_filters['search_word'] ."%'";
-		// }
-
 		if (isset($trnx_filters['search_word']) && $trnx_filters['search_word'] != "") {
 			$criterial .= " AND l.package_title  LIKE'%" . $trnx_filters['search_word'] . "%'"."OR"." l.city_loaction  LIKE'%" . $trnx_filters['search_word'] . "%'";
 		}
 
+		$criterial .= " AND l.status = 'active'";
+		$criterial .= " AND l.status_by_admin = 'active'";
+
 		$query = "SELECT l.*,CONCAT (p.firstname,' ',p.lastname) as provider_name FROM tbl_package AS l 
-			   LEFT JOIN tbl_provider AS p ON p.id = l.provider_id  WHERE l.status = 'active' AND  l.status_by_admin= 'active'";
+			   LEFT JOIN tbl_provider AS p ON p.id = l.provider_id";
 
 		// 	$query = "SELECT l.*,c.firstname AS country_name, FROM tbl_package AS l
 		//    LEFT JOIN tbl_provider AS c ON c.id = l.provider_id ";

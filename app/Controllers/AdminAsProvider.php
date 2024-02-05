@@ -268,8 +268,6 @@ class AdminAsProvider extends BaseController
 
 
             $SmallestPrices = $Smallestamount[0]->SmallestPrice;
-            //  echo json_encode($SmallestPrices);die();
-
             
              // update package for Rate  
              $update_package = [
@@ -392,8 +390,6 @@ class AdminAsProvider extends BaseController
         $accommodations_detail = $this->request->getPost("accommodations_detail");
         $return_policy = $this->request->getPost("return_policy");
         $type_of_package = $this->request->getPost("type_of_package");
-        $package_amount = $this->request->getPost("package_amount");
-        $package_duration = $this->request->getPost("package_duration");
         $reason = $this->request->getPost("reason");
         $language = $this->request->getPost("language");
         $ziyarat_points = $this->request->getPost("ziyarat_points");
@@ -446,8 +442,6 @@ class AdminAsProvider extends BaseController
             "accommodations_detail" => $accommodations_detail ? $accommodations_detail : $package->accommodations_detail,
             "return_policy" => $return_policy ? $return_policy : $package->return_policy,
             "type_of_package" => $type_of_package ? $type_of_package : $package->type_of_package,
-            "package_amount" => $package_amount ? $package_amount : $package->package_amount,
-            "package_duration" => $package_duration ? $package_duration : $package->package_duration,
             "reason" => $reason ? $reason : $package->reason,
             "language" => $language ? $language : $package->language,
             "ziyarat_points" => $ziyarat_points ? $ziyarat_points : $package->ziyarat_points,
@@ -491,7 +485,26 @@ class AdminAsProvider extends BaseController
                 if ($vechile_ids) {
                     $remove = $db->table('tbl_package_vehicle')->where('package_id', $package_id)->whereNotIn('id', $vechile_ids)->delete();
                 }
+
+                $db = \Config\Database::connect();
+                $builder = $db->table('tbl_package_vehicle');
+                $builder->select('MIN(rate) AS SmallestPrice');
+                $builder->where('package_id', $package_id);
+                $Smallestamount = $builder->get()->getResult();
+    
+    
+                $SmallestPrices = $Smallestamount[0]->SmallestPrice;
+                
+                 // update package for Rate  
+                 $update_package = [
+                    "package_amount" => $SmallestPrices
+                 ];
+                 $PackageModels->update($package_id, $update_package);
             } elseif($package_type == "individual") {
+                $update_package = [
+                    "package_amount" => $individual_price
+                ];
+                $PackageModels->update($package_id, $update_package);
                 $remove = $db->table('tbl_package_vehicle')->where('package_id', $package_id)->delete();
             }
 

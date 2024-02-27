@@ -126,6 +126,7 @@ $routes->post('api/vehicle_master', 'Dashboard::vehicleMaster');
 $routes->post('api/pax_master', 'Dashboard::paxMaster');
 $routes->post('api/service_master', 'Dashboard::serviceMaster');
 $routes->post('api/get_all_provider', 'Meals::getAllProvider');//done
+$routes->post('api/get_all_departure_cities', 'Masters::departureCityMaster');//done
 
 // Admin as Provider 
 $routes->post('api/admin_add_package', 'AdminAsProvider::addPackage');
@@ -314,6 +315,7 @@ $routes->post('api/view-ziyarat-point', 'UserLists::viewpoint');
 $routes->post('api/banner-list', 'UserLists::listOfBanner');
 $routes->post('api/featured-packages', 'UserLists::featuredPackageList');
 $routes->post('api/search-package', 'UserLists::searchPackage');
+$routes->post('api/full-package-by-city', 'UserLists::fullPackageListByCity');
 
 // Manage Cities By Javeriya kauser
 $routes->group('city', function ($routes) {
@@ -323,6 +325,15 @@ $routes->group('city', function ($routes) {
 	$routes->post('change-status', 'ManageCities::changeCitytatus');
 	$routes->post('view', 'ManageCities::viewCity');
 	$routes->post('update', 'ManageCities::editCity');
+});
+
+$routes->group('departure-city', function ($routes) {
+	$routes->post('add', 'ManageDepartureCities::addCity');
+	$routes->post('delete', 'ManageDepartureCities::deleteCity');
+	$routes->post('list', 'ManageDepartureCities::cityList');
+	$routes->post('change-status', 'ManageDepartureCities::changeCitytatus');
+	$routes->post('view', 'ManageDepartureCities::viewCity');
+	$routes->post('update', 'ManageDepartureCities::editCity');
 });
 
 // Manage Ziyarat Points By JAveriya Kauser
@@ -343,4 +354,12 @@ $routes->group('banner', function ($routes) {
 	$routes->post('change-status', 'ManageLandingPageBanners::changeBannerStatus');
 	$routes->post('view', 'ManageLandingPageBanners::viewBanner');
 	$routes->post('update', 'ManageLandingPageBanners::editBanner');
+});
+
+// Manage Terms and Conditions By JAveriya Kauser
+$routes->group('terms', function ($routes) {
+	$routes->post('add', 'ManageTermsConditions::add');
+	$routes->post('list', 'ManageTermsConditions::list');
+	$routes->post('view', 'ManageTermsConditions::view');
+	$routes->post('update', 'ManageTermsConditions::edit');
 });

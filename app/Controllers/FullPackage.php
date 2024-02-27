@@ -565,7 +565,11 @@ class FullPackage extends BaseController
                 if(!empty($isExist))
                 {
                 $db = db_connect();
-                $isExist['departure_dates'] = $db->table('tbl_full_package_dates')->where('full_package_id', $package_id)->get()->getResult();
+                $isExist['departure_dates'] = $db->table('tbl_full_package_dates')
+                                                 ->where('full_package_id', $package_id)
+                                                 ->join('tbl_departure_city_master as c','c.id = tbl_full_package_dates.city')
+                                                 ->select('tbl_full_package_dates.*,c.name as city')
+                                                 ->get()->getResult();
                 $isExist['images'] = $db->table('tbl_full_package_image')->where('full_package_id', $package_id)->get()->getResult();
 
                 return $service->success([
@@ -1241,13 +1245,19 @@ class FullPackage extends BaseController
             $info = $db->table('tbl_full_package_enquiry as e')
                 ->join('tbl_user as u','u.id = e.user_id')
                 ->join('tbl_full_package as p','p.id = e.full_package_id')
-                ->select("e.*, e.name as user_name, p.name as package_name")
+                ->join('tbl_provider as pr','pr.id = p.provider_id')
+                ->select("e.*, e.name as user_name, p.name as package_name, CONCAT(pr.firstname,' ',pr.lastname) as provider_name")
                 ->where('e.status','1')
                 ->where('e.id',$enquiry_id)
                 ->get()->getRow();
 
             if(!empty($info))
             {
+                $info->flight_details = $db->table('tbl_full_package_dates')
+                                                 ->where('full_package_id', $info->full_package_id)
+                                                 ->join('tbl_departure_city_master as c','c.id = tbl_full_package_dates.city')
+                                                 ->select('tbl_full_package_dates.*,c.name as city')
+                                                 ->get()->getResult();
                 return $service->success([
                     'message'       =>  Lang('Language.details_success'),
                     'data'          =>  $info

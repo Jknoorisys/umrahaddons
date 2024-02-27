@@ -8,6 +8,7 @@ use App\Models\Duas;
 use App\Models\FullPackage;
 use App\Models\FullPackageDates;
 use App\Models\FullPackageImages;
+use App\Models\TermsConditions;
 use App\Models\Visa;
 use App\Models\ZiyaratPoints;
 use App\Models\ZiyaratPointsImages;
@@ -436,7 +437,7 @@ class UserLists extends BaseController
             $total = $totalBuilder->countAllResults(false);
 
             $data = $table
-                ->select('p.id, p.provider_id, p.name, p.duration, p.departure_city, p.mecca_hotel, p.mecca_hotel_distance, p.madinah_hotel, p.madinah_hotel_distance, p.details, p.main_img, p.inclusions, p.pent_rate_SAR as single_rate_SAR, p.pent_rate_INR as single_rate_INR, p.infant_rate_with_bed_SAR, p.infant_rate_with_bed_INR, p.infant_rate_without_bed_SAR, p.infant_rate_without_bed_INR, p.status, p.created_at, p.updated_at')
+                ->select('p.id, p.provider_id, p.name, p.duration, p.mecca_hotel, p.mecca_hotel_distance, p.madinah_hotel, p.madinah_hotel_distance, p.details, p.main_img, p.inclusions, p.pent_rate_SAR as single_rate_SAR, p.pent_rate_INR as single_rate_INR, p.infant_rate_with_bed_SAR, p.infant_rate_with_bed_INR, p.infant_rate_without_bed_SAR, p.infant_rate_without_bed_INR, p.status, p.created_at, p.updated_at')
                 ->orderBy('p.id', 'DESC')
                 ->limit($limit, $offset)
                 ->get()
@@ -507,7 +508,11 @@ class UserLists extends BaseController
                 if(!empty($isExist))
                 {
                 $db = db_connect();
-                $isExist['departure_dates'] = $db->table('tbl_full_package_dates')->where('full_package_id', $package_id)->get()->getResult();
+                $isExist['departure_dates'] = $db->table('tbl_full_package_dates')
+                ->where('full_package_id', $package_id)
+                ->join('tbl_departure_city_master as c','c.id = tbl_full_package_dates.city')
+                ->select('tbl_full_package_dates.*,c.name as city')
+                ->get()->getResult();
                 $isExist['images'] = $db->table('tbl_full_package_image')->where('full_package_id', $package_id)->get()->getResult();
 
                 return $service->success([
@@ -1071,4 +1076,169 @@ class UserLists extends BaseController
             );
         }
     }
+
+    // filter full package by departure city - Javeriya
+    public function fullPackageListByCity() {
+        $service = new Services();
+        $service->cors();
+
+        $pageNo = $this->request->getVar('pageNo');
+
+        $rules = [
+            'pageNo' => [
+                'rules'  => 'required|greater_than[' . PAGE_LENGTH . ']|numeric',
+                'errors' => [
+                    'required'     => Lang('Language.required'),
+                    'greater_than' => Lang('Language.greater_than', [PAGE_LENGTH]),
+                    'numeric'      => Lang('Language.numeric', [$pageNo]),
+                ]
+            ],
+            'language' => [
+                'rules'  => 'required|in_list[' . LANGUAGES . ']',
+                'errors' => [
+                    'required' => Lang('Language.required'),
+                    'in_list'  => Lang('Language.in_list', [LANGUAGES]),
+                ]
+            ],
+            'city_id' => [
+                'rules'  => 'required|numeric',
+            ],
+        ];
+
+        if (!$this->validate($rules)) {
+            return $service->fail(
+                [
+                    'errors'  => $this->validator->getErrors(),
+                    'message' => lang('Language.invalid_inputs')
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+
+        try {
+            $currentPage = (!empty($pageNo)) ? $pageNo : 1;
+            $offset = ($currentPage - 1) * PER_PAGE;
+            $limit = PER_PAGE;
+            $search = $this->request->getVar('search');
+            $city_id = $this->request->getVar('city_id');
+
+            $db = db_connect();
+            $table = $db->table('tbl_full_package as p')->where('p.status', '1');
+
+            if (isset($search) && !empty($search)) {
+                $table->groupStart()
+                    ->like('p.name', $search)
+                    ->orLike('p.details', $search)
+                    ->orLike('p.mecca_hotel', $search)
+                    ->orLike('p.madinah_hotel', $search)
+                    ->groupEnd();
+            }
+
+            $totalBuilder = clone $table;
+            $total = $totalBuilder->countAllResults(false);
+
+            $data = $table
+                ->join('tbl_full_package_dates as d', 'd.full_package_id = p.id')
+                ->where('d.city', $city_id)
+                ->distinct()
+                ->select('p.id, p.provider_id, p.name, p.duration, p.mecca_hotel, p.mecca_hotel_distance, p.madinah_hotel, p.madinah_hotel_distance, p.details, p.main_img, p.inclusions, p.pent_rate_SAR as single_rate_SAR, p.pent_rate_INR as single_rate_INR, p.infant_rate_with_bed_SAR, p.infant_rate_with_bed_INR, p.infant_rate_without_bed_SAR, p.infant_rate_without_bed_INR, p.status, p.created_at, p.updated_at')
+                ->orderBy('p.id', 'DESC')
+                ->limit($limit, $offset)
+                ->get()
+                ->getResult(); // Fetch the paginated results
+
+            return $service->success(
+                [
+                    'message' => Lang('Language.list_success'),
+                    'data'    => [
+                        'total'    => $total,
+                        'packages' => $data,
+                    ]
+                ],
+                ResponseInterface::HTTP_OK,
+                $this->response
+            );
+        } catch (Exception $e) {
+            return $service->fail(
+                [
+                    'errors'  => $e->getMessage(),
+                    'message' => Lang('Language.fetch_list'),
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+    }
+    
+    // get terms and conditions by Javeriya
+    public function getTermsAndConditions() {
+        $Model      =  new TermsConditions();
+        $service        =  new Services();
+        $service->cors();
+
+        $condition_id  =  $this->request->getVar('condition_id');
+
+        $rules = [
+            'language' => [
+                'rules'         =>  'required|in_list[' . LANGUAGES . ']',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                    'in_list'       =>  Lang('Language.in_list', [LANGUAGES]),
+                ]
+            ],
+            'condition_id' => [
+                'rules'         =>  'required|numeric',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                ]
+            ],
+        ];
+
+        if(!$this->validate($rules)) {
+            return $service->fail(
+                [
+                    'errors'     =>  $this->validator->getErrors(),
+                    'message'   =>  lang('Language.invalid_inputs')
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+
+        try {
+            $details = $Model->where("id", $condition_id)->first();
+
+            if(!empty($details)) 
+            {
+                return $service->success([
+                        'message'       =>  Lang('Language.details_success'),
+                        'data'          =>  $details
+                    ],
+                    ResponseInterface::HTTP_CREATED,
+                    $this->response
+                );
+            } else {
+                return $service->fail(
+                    [
+                        'errors'    =>  "",
+                        'message'   =>  Lang('Language.details_fetch_failed'),
+                    ],
+                    ResponseInterface::HTTP_BAD_REQUEST,
+                    $this->response
+                );
+            }
+
+        } catch (Exception $e) {
+            return $service->fail(
+                [
+                    'errors'    =>  $e->getMessage(),
+                    'message'   =>  Lang('Language.details_fetch_failed'),
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+    }
+
 }

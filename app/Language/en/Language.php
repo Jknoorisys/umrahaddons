@@ -79,6 +79,7 @@ return [
 	'Vehicle Master'=>'Vehicle Master',
 	'Booking Details Not Found'=>'Booking Details Not Found',
 	'Booking Details'=>'Booking Details',
+	'Details Not Found'=>'Details Not Found',
 	'User details'=>'User details',
 	'Provider Not Found'=>'Provider Not Found',
 	'OTA status changed successfully'=>'OTA status changed successfully',

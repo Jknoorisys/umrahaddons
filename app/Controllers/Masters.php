@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\DepartureCityMaster;
 use App\Models\PackageModels;
 use App\Models\ZiyaratPoints;
 use CodeIgniter\API\ResponseTrait;
@@ -520,6 +521,69 @@ class Masters extends ResourceController
                 return $service->success([
                     'message'       =>  Lang('Language.list_success'),
                     'data'          =>  $points
+                    ],
+                    ResponseInterface::HTTP_OK,
+                    $this->response
+                );
+            } else {
+                return $service->fail(
+                    [
+                        'errors'    =>  "",
+                        'message'   =>  Lang('Language.list_failed'),
+                    ],
+                    ResponseInterface::HTTP_BAD_REQUEST,
+                    $this->response
+                );
+            }
+
+        } catch (Exception $e) {
+            return $service->fail(
+                [
+                    'errors'    =>  "",
+                    'message'   =>  Lang('Language.list_failed'),
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+    }
+
+    // departure city master api
+    public function departureCityMaster()
+    {
+
+        $service   =  new Services();
+        $city     = new DepartureCityMaster();
+      
+        $rules = [
+            'language' => [
+                'rules'         =>  'required|in_list[' . LANGUAGES . ']',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                    'in_list'       =>  Lang('Language.in_list', [LANGUAGES]),
+                ]
+            ],
+        ];
+
+        if(!$this->validate($rules)) {
+            return $service->fail(
+                [
+                    'errors'     =>  $this->validator->getErrors(),
+                    'message'   =>  lang('Language.invalid_inputs')
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+       
+        try {
+            
+            $cities = $city->where('status', '1')->select('*')->orderBy('id')->get()->getResult();
+            if(!empty($cities))
+            {
+                return $service->success([
+                    'message'       =>  Lang('Language.list_success'),
+                    'data'          =>  $cities
                     ],
                     ResponseInterface::HTTP_OK,
                     $this->response

@@ -251,7 +251,7 @@ class ManageTermsConditions extends BaseController
         $service        =  new Services();
         $service->cors();
 
-        $condition_id  =  $this->request->getVar('condition_id');
+        $usage  =  $this->request->getVar('usage');
 
         $rules = [
             'language' => [
@@ -261,8 +261,8 @@ class ManageTermsConditions extends BaseController
                     'in_list'       =>  Lang('Language.in_list', [LANGUAGES]),
                 ]
             ],
-            'condition_id' => [
-                'rules'         =>  'required|numeric',
+            'usage' => [
+                'rules'         =>  'required',
                 'errors'        => [
                     'required'      =>  Lang('Language.required'),
                 ]
@@ -281,7 +281,7 @@ class ManageTermsConditions extends BaseController
         }
 
         try {
-            $details = $Model->where("id", $condition_id)->first();
+            $details = $Model->where("usage", $usage)->first();
 
             if(!empty($details)) 
             {
@@ -321,7 +321,7 @@ class ManageTermsConditions extends BaseController
         $service        =  new Services();
         $service->cors();
 
-        $condition_id            =  $this->request->getVar('condition_id');
+        $usage            =  $this->request->getVar('usage');
         $detail               =  $this->request->getVar('detail') ? $this->request->getVar('detail') : '';
 
         $rules = [
@@ -338,8 +338,8 @@ class ManageTermsConditions extends BaseController
                     'required'      =>  Lang('Language.required'),
                 ]
             ],
-            'condition_id' => [
-                'rules'         =>  'required|numeric',
+            'usage' => [
+                'rules'         =>  'required',
                 'errors'        => [
                     'required'      =>  Lang('Language.required'),
                 ]
@@ -358,7 +358,7 @@ class ManageTermsConditions extends BaseController
         }
 
         try {
-            $Details = $Model->where("id", $condition_id)->first();
+            $Details = $Model->where("usage", $usage)->first();
             if (empty($Details)) {
                 return $service->fail(
                     [
@@ -388,7 +388,7 @@ class ManageTermsConditions extends BaseController
 
             $db = db_connect();
             $update = $db->table('tbl_terms_and_conditions')
-                ->where('id', $condition_id)
+                ->where('usage', $usage)
                 ->update($data);
 
             if($update) 
@@ -416,6 +416,98 @@ class ManageTermsConditions extends BaseController
                 [
                     'errors'    =>  $e->getMessage(),
                     'message'   =>  Lang('Language.update_failed'),
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+    }
+
+    public function addOrUpdate()
+    {
+        $Model      =  new TermsConditions();
+        $service        =  new Services();
+        $service->cors();
+
+        $usage            =  $this->request->getVar('usage');
+        $detail               =  $this->request->getVar('detail');
+
+        $rules = [
+            'language' => [
+                'rules'         =>  'required|in_list[' . LANGUAGES . ']',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                    'in_list'       =>  Lang('Language.in_list', [LANGUAGES]),
+                ]
+            ],
+            'logged_user_id' => [
+                'rules'         =>  'required|numeric',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                ]
+            ],
+            'usage' => [
+                'rules'         =>  'required',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                ]
+            ],
+            'detail' => [
+                'rules'         =>  'required',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                ]
+            ]
+        ];
+
+        if(!$this->validate($rules)) {
+            return $service->fail(
+                [
+                    'errors'     =>  $this->validator->getErrors(),
+                    'message'   =>  lang('Language.invalid_inputs')
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+
+        try {
+            $Details = $Model->where("usage", $usage)->first();
+
+            $data = [
+                'details'          =>    $detail,
+                'usage'            =>    $usage,
+                'created_at'    => date('Y-m-d H:i:s'), 
+                'updated_at'    => date('Y-m-d H:i:s'),
+            ];
+
+            $db = db_connect();
+            if ($Details != null && !empty($Details) && $Details['usage'] == $usage) {
+                $db->table('tbl_terms_and_conditions')
+                    ->where('usage', $usage)
+                    ->update($data);
+                    return $service->success([
+                        'message'       =>  Lang('Language.update_success'),
+                        'data'          =>  ""
+                    ],
+                    ResponseInterface::HTTP_CREATED,
+                    $this->response
+                );
+            } else {  
+                $db->table('tbl_terms_and_conditions')->insert($data);
+                    return $service->success([
+                        'message'       =>  Lang('Language.add_success'),
+                        'data'          =>  $data
+                    ],
+                    ResponseInterface::HTTP_CREATED,
+                    $this->response
+                );
+            }
+        } catch (Exception $e) {
+            return $service->fail(
+                [
+                    'errors'    =>  $e->getMessage(),
+                    'message'   =>  Lang('Language.Something went wrong'),
                 ],
                 ResponseInterface::HTTP_BAD_REQUEST,
                 $this->response

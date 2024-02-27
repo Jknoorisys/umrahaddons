@@ -129,6 +129,7 @@ return [
 	'Guide Created Successfully' => 'Guide Created Successfully',
 	'Transaction  Failed' => 'Transaction Failed',
 	'sabeel_not_found' => 'Sabeel not found',
+	'Something went wrong' => 'Something went wrong',
 
 	// Manage Duas
 	'Dua Not Found' => 'Dua Not Found',

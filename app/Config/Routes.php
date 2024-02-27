@@ -362,4 +362,5 @@ $routes->group('terms', function ($routes) {
 	$routes->post('list', 'ManageTermsConditions::list');
 	$routes->post('view', 'ManageTermsConditions::view');
 	$routes->post('update', 'ManageTermsConditions::edit');
+	$routes->post('add-or-update', 'ManageTermsConditions::addOrUpdate');
 });

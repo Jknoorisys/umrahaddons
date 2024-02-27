@@ -510,9 +510,12 @@ class UserLists extends BaseController
         }
 
         try {
-            $isExist = $package->where('id',$package_id)->where('status','1')->first();
-                if(!empty($isExist))
-                {
+            $isExist = $package->where('tbl_full_package.id',$package_id)
+                                ->where('tbl_full_package.status','1')
+                                ->join('tbl_provider as p','p.id = tbl_full_package.provider_id')
+                                ->select("tbl_full_package.*,CONCAT (p.firstname,' ',p.lastname) as provider_name, p.mobile as provider_contact, p.email as provider_email")
+                                ->first();
+            if(!empty($isExist)){
                 $db = db_connect();
                 $isExist['departure_dates'] = $db->table('tbl_full_package_dates')
                 ->where('full_package_id', $package_id)
@@ -528,16 +531,16 @@ class UserLists extends BaseController
                     ResponseInterface::HTTP_OK,
                     $this->response
                 );
-                } else {
-                    return $service->fail(
-                        [
-                            'errors'    =>  "",
-                            'message'   =>  Lang('Language.Package Not Found'),
-                        ],
-                        ResponseInterface::HTTP_BAD_REQUEST,
-                        $this->response
-                    );
-                }
+            } else {
+                return $service->fail(
+                    [
+                        'errors'    =>  "",
+                        'message'   =>  Lang('Language.Package Not Found'),
+                    ],
+                    ResponseInterface::HTTP_BAD_REQUEST,
+                    $this->response
+                );
+            }
 
         } catch (Exception $e) {
             return $service->fail(

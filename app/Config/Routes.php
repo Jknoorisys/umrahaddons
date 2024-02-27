@@ -316,6 +316,7 @@ $routes->post('api/banner-list', 'UserLists::listOfBanner');
 $routes->post('api/featured-packages', 'UserLists::featuredPackageList');
 $routes->post('api/search-package', 'UserLists::searchPackage');
 $routes->post('api/full-package-by-city', 'UserLists::fullPackageListByCity');
+$routes->post('api/terms-conditions', 'UserLists::getTermsAndConditions');
 
 // Manage Cities By Javeriya kauser
 $routes->group('city', function ($routes) {

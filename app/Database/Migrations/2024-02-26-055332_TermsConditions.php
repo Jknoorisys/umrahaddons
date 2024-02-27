@@ -17,6 +17,12 @@ class TermsConditions extends Migration
 				'auto_increment' => true,
 			],
 
+			'usage' => [
+				'type' => 'VARCHAR',
+				'constraint' => '100',
+				'null' => true,
+			],
+
             'details' => [
                 'type' => 'LONGTEXT',
                 'null' => true,

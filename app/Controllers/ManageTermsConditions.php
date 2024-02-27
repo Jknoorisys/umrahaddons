@@ -180,7 +180,14 @@ class ManageTermsConditions extends BaseController
                 'errors'        => [
                     'required'      =>  Lang('Language.required'),
                 ]
-            ]
+                ],
+
+            'usage' => [
+                'rules'         =>  'required|is_unique[tbl_terms_and_conditions.usage]',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                ]
+                ],
         ];
 
         if(!$this->validate($rules)) {
@@ -200,6 +207,7 @@ class ManageTermsConditions extends BaseController
 
             $data = array(
                 'details'          => $details,
+                'usage'            => $this->request->getVar('usage'),
                 'created_at'    => date('Y-m-d H:i:s'),
             );
 

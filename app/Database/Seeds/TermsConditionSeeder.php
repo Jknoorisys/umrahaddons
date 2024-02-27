@@ -10,7 +10,14 @@ class TermsConditionSeeder extends Seeder
     {
         $data = [
             [
+                'usage' => 'over_all',
                 'details' => 'Umrah Plus Terms and Conditions',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'usage' => 'full_package',
+                'details' => 'Full Package Terms and Conditions',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],

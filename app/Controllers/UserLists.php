@@ -1183,7 +1183,7 @@ class UserLists extends BaseController
         $service        =  new Services();
         $service->cors();
 
-        $condition_id  =  $this->request->getVar('condition_id');
+        $usage  =  $this->request->getVar('usage');
 
         $rules = [
             'language' => [
@@ -1193,8 +1193,8 @@ class UserLists extends BaseController
                     'in_list'       =>  Lang('Language.in_list', [LANGUAGES]),
                 ]
             ],
-            'condition_id' => [
-                'rules'         =>  'required|numeric',
+            'usage' => [
+                'rules'         =>  'required',
                 'errors'        => [
                     'required'      =>  Lang('Language.required'),
                 ]
@@ -1213,7 +1213,7 @@ class UserLists extends BaseController
         }
 
         try {
-            $details = $Model->where("id", $condition_id)->first();
+            $details = $Model->where("usage", $usage)->first();
 
             if(!empty($details)) 
             {

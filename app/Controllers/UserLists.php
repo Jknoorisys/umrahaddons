@@ -420,9 +420,10 @@ class UserLists extends BaseController
             $offset = ($currentPage - 1) * PER_PAGE;
             $limit = PER_PAGE;
             $search = $this->request->getVar('search');
+            $departure_city = $this->request->getVar('departure_city');
 
             $db = db_connect();
-            $table = $db->table('tbl_full_package as p')->where('p.status', '1');
+            $table = $db->table('tbl_full_package as p')->where('p.status', '1')->join('tbl_full_package_dates as d', 'd.full_package_id = p.id');
 
             if (isset($search) && !empty($search)) {
                 $table->groupStart()
@@ -433,6 +434,10 @@ class UserLists extends BaseController
                     ->groupEnd();
             }
 
+            if (isset($departure_city) && !empty($departure_city)) {
+                $table->where('d.city', $departure_city);
+            }
+
             $totalBuilder = clone $table;
             $total = $totalBuilder->countAllResults(false);
 
@@ -440,6 +445,7 @@ class UserLists extends BaseController
                 ->select('p.id, p.provider_id, p.name, p.duration, p.mecca_hotel, p.mecca_hotel_distance, p.madinah_hotel, p.madinah_hotel_distance, p.details, p.main_img, p.inclusions, p.pent_rate_SAR as single_rate_SAR, p.pent_rate_INR as single_rate_INR, p.infant_rate_with_bed_SAR, p.infant_rate_with_bed_INR, p.infant_rate_without_bed_SAR, p.infant_rate_without_bed_INR, p.status, p.created_at, p.updated_at')
                 ->orderBy('p.id', 'DESC')
                 ->limit($limit, $offset)
+                ->distinct()
                 ->get()
                 ->getResult(); // Fetch the paginated results
 
@@ -447,7 +453,7 @@ class UserLists extends BaseController
                 [
                     'message' => Lang('Language.list_success'),
                     'data'    => [
-                        'total'    => $total,
+                        'total'    => count($data),
                         'packages' => $data,
                     ]
                 ],

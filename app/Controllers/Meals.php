@@ -510,6 +510,7 @@ class Meals extends ResourceController
                  $db = db_connect();
                  $isExist = $db->table('tbl_meals as m')
                     ->join('tbl_cuision_master as c','c.id = m.cuisine_id')
+                    ->join('tbl_provider as p','p.id = m.provider_id')
                     ->select('m.*, c.name as cuisine_name')
                     ->where('m.id', $meals_id)
                     ->get()->getRowArray();

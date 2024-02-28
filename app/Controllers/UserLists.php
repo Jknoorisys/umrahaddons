@@ -1224,7 +1224,7 @@ class UserLists extends BaseController
                         'message'       =>  Lang('Language.details_success'),
                         'data'          =>  $details
                     ],
-                    ResponseInterface::HTTP_CREATED,
+                    ResponseInterface::HTTP_OK,
                     $this->response
                 );
             } else {

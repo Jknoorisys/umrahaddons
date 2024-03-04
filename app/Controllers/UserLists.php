@@ -442,7 +442,7 @@ class UserLists extends BaseController
             $total = $totalBuilder->countAllResults(false);
 
             $data = $table
-                ->select('p.id, p.provider_id, p.name, p.duration, p.mecca_hotel, p.mecca_hotel_distance, p.madinah_hotel, p.madinah_hotel_distance, p.details, p.main_img, p.inclusions, p.pent_rate_SAR as single_rate_SAR, p.pent_rate_INR as single_rate_INR, p.infant_rate_with_bed_SAR, p.infant_rate_with_bed_INR, p.infant_rate_without_bed_SAR, p.infant_rate_without_bed_INR, p.status, p.created_at, p.updated_at')
+                ->select('p.id, p.provider_id, p.name, p.duration, p.mecca_hotel, p.mecca_hotel_distance, p.madinah_hotel, p.madinah_hotel_distance, p.details, p.main_img, p.inclusions, p.pent_rate_SAR as single_rate_SAR, p.pent_rate_INR as single_rate_INR, p.infant_rate_with_bed_SAR, p.infant_rate_with_bed_INR, p.infant_rate_without_bed_SAR, p.infant_rate_without_bed_INR, p.status, p.created_at, p.updated_at, d.city as departure_city')
                 ->orderBy('p.id', 'DESC')
                 ->limit($limit, $offset)
                 ->distinct()

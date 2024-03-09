@@ -136,30 +136,30 @@ class FullPackage extends BaseController
                     'required'      =>  Lang('Language.required'),
                 ]
             ],
-            'infant_rate_with_bed_SAR' => [
-                'rules'         =>  'required',
-                'errors'        => [
-                    'required'      =>  Lang('Language.required'),
-                ]
-            ],
-            'infant_rate_with_bed_INR' => [
-                'rules'         =>  'required',
-                'errors'        => [
-                    'required'      =>  Lang('Language.required'),
-                ]
-            ],
-            'infant_rate_without_bed_SAR' => [
-                'rules'         =>  'required',
-                'errors'        => [
-                    'required'      =>  Lang('Language.required'),
-                ]
-            ],
-            'infant_rate_without_bed_INR' => [
-                'rules'         =>  'required',
-                'errors'        => [
-                    'required'      =>  Lang('Language.required'),
-                ]
-            ],
+            // 'infant_rate_with_bed_SAR' => [
+            //     'rules'         =>  'required',
+            //     'errors'        => [
+            //         'required'      =>  Lang('Language.required'),
+            //     ]
+            // ],
+            // 'infant_rate_with_bed_INR' => [
+            //     'rules'         =>  'required',
+            //     'errors'        => [
+            //         'required'      =>  Lang('Language.required'),
+            //     ]
+            // ],
+            // 'infant_rate_without_bed_SAR' => [
+            //     'rules'         =>  'required',
+            //     'errors'        => [
+            //         'required'      =>  Lang('Language.required'),
+            //     ]
+            // ],
+            // 'infant_rate_without_bed_INR' => [
+            //     'rules'         =>  'required',
+            //     'errors'        => [
+            //         'required'      =>  Lang('Language.required'),
+            //     ]
+            // ],
         ];
 
         if(!$this->validate($rules)) {
@@ -568,7 +568,7 @@ class FullPackage extends BaseController
                 $isExist['departure_dates'] = $db->table('tbl_full_package_dates')
                                                  ->where('full_package_id', $package_id)
                                                  ->join('tbl_departure_city_master as c','c.id = tbl_full_package_dates.city')
-                                                 ->select('tbl_full_package_dates.*,c.name as city')
+                                                 ->select('tbl_full_package_dates.*, c.id as city')
                                                  ->get()->getResult();
                 $isExist['images'] = $db->table('tbl_full_package_image')->where('full_package_id', $package_id)->get()->getResult();
 

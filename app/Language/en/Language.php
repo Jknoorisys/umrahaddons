@@ -159,4 +159,9 @@ return [
 	'Banner Not Found' => 'Banner Not Found',
 	'Banner status changed successfully' => 'Banner status changed successfully',
 	'Unable to change Banner status, please try again' => 'Unable to change Banner status, please try again',
+
+	// Manage App Links
+	'App Not Found' => 'App Not Found',
+	'App Link status changed successfully' => 'App Link status changed successfully',
+	'Unable to change App Link status, please try again' => 'Unable to change App Link status, please try again',
 ];

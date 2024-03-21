@@ -317,6 +317,7 @@ $routes->post('api/featured-packages', 'UserLists::featuredPackageList');
 $routes->post('api/search-package', 'UserLists::searchPackage');
 $routes->post('api/full-package-by-city', 'UserLists::fullPackageListByCity');
 $routes->post('api/terms-conditions', 'UserLists::getTermsAndConditions');
+$routes->post('api/app-links', 'UserLists::getAppLinks');
 
 // Manage Cities By Javeriya kauser
 $routes->group('city', function ($routes) {
@@ -364,4 +365,13 @@ $routes->group('terms', function ($routes) {
 	$routes->post('view', 'ManageTermsConditions::view');
 	$routes->post('update', 'ManageTermsConditions::edit');
 	$routes->post('add-or-update', 'ManageTermsConditions::addOrUpdate');
+});
+
+$routes->group('app-link', function ($routes) {
+	$routes->post('add', 'ManageAppLinks::add');
+	$routes->post('delete', 'ManageAppLinks::delete');
+	$routes->post('list', 'ManageAppLinks::list');
+	$routes->post('change-status', 'ManageAppLinks::changeStatus');
+	$routes->post('view', 'ManageAppLinks::view');
+	$routes->post('update', 'ManageAppLinks::edit');
 });

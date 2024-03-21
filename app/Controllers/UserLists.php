@@ -1250,4 +1250,82 @@ class UserLists extends BaseController
         }
     }
 
+    public function getAppLinks()
+    {
+        $service           =  new Services();
+        $service->cors();
+
+        $pageNo           =  $this->request->getVar('pageNo');
+
+        $rules = [
+            'pageNo' => [
+                'rules'         =>  'required|greater_than[' . PAGE_LENGTH . ']|numeric',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                    'greater_than'  =>  Lang('Language.greater_than', [PAGE_LENGTH]),
+                    'numeric'       =>  Lang('Language.numeric', [$pageNo]),
+                ]
+            ],
+            'language' => [
+                'rules'         =>  'required|in_list[' . LANGUAGES . ']',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                    'in_list'       =>  Lang('Language.in_list', [LANGUAGES]),
+                ]
+            ],
+        ];
+
+        if(!$this->validate($rules)) {
+            return $service->fail(
+                [
+                    'errors'     =>  $this->validator->getErrors(),
+                    'message'   =>  lang('Language.invalid_inputs')
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+
+        try{
+
+            $currentPage   = ( !empty( $pageNo ) ) ? $pageNo : 1;
+            $offset        = ( $currentPage - 1 ) * PER_PAGE;
+            $limit         =  PER_PAGE;
+
+        
+            // By Query Builder
+            $db = db_connect();
+            $appData = $db->table('tbl_app_links as s')
+                                ->where('s.status', '1')
+                                ->orderBy('s.id', 'DESC')
+                                ->limit($limit, $offset)
+                                ->get()->getResult();
+            
+
+            $total =  $db->table('tbl_app_links as s')->where('s.status', '1')->countAllResults();
+
+            return $service->success(
+                [
+                    'message'       =>  Lang('Language.list_success'),
+                    'data'          =>  [
+                        'total'             =>  $total,
+                        'AppList'         =>  $appData,
+                    ]
+                ],
+                ResponseInterface::HTTP_OK,
+                $this->response
+            );
+
+        } catch (Exception $e) {
+            return $service->fail(
+                [
+                    'errors'    =>  "",
+                    'message'   =>  Lang('Language.fetch_list'),
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+    }
+
 }

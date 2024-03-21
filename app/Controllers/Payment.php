@@ -844,6 +844,11 @@ class Payment extends ResourceController
         $guest_contact_no = $this->request->getPost('guest_contact_no');
         $guest_fullname = $this->request->getPost('guest_fullname');
 
+		if ($user_pax > 30) {
+			echo json_encode(['status' => 'failed', 'messages' => lang('Language.No of Pax should be less than 30')]);
+            die();
+		}
+
 		// check ota
         $otadata = $OtaMoodel->where("id", $ota_id)->where('status', $active)->first();
         if (empty($otadata)) {

@@ -1309,7 +1309,7 @@ class UserLists extends BaseController
                     'message'       =>  Lang('Language.list_success'),
                     'data'          =>  [
                         'total'             =>  $total,
-                        'AppList'         =>  $appData,
+                        'app_list'         =>  $appData,
                     ]
                 ],
                 ResponseInterface::HTTP_OK,

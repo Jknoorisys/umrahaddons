@@ -162,6 +162,7 @@ return [
 
 	// Manage App Links
 	'App Not Found' => 'App Not Found',
+	'App Already Exists' => 'App Already Exists',
 	'App Link status changed successfully' => 'App Link status changed successfully',
 	'Unable to change App Link status, please try again' => 'Unable to change App Link status, please try again',
 ];

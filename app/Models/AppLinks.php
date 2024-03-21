@@ -16,6 +16,7 @@ class AppLinks extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         'name',
+        'description',
         'logo',
         'play_store',
         'app_store',

@@ -195,6 +195,13 @@ class ManageAppLinks extends BaseController
                 ]
             ],
 
+            'description' => [
+                'rules'         =>  'required',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                ]
+            ],
+
             'app_store' => [
                 'rules'         =>  'required',
                 'errors'        => [
@@ -224,8 +231,10 @@ class ManageAppLinks extends BaseController
         try {
 
             $name     =  $this->request->getVar('name');
+            $description  =  $this->request->getVar('description');
             $app_store     =  $this->request->getVar('app_store');
             $play_store     =  $this->request->getVar('play_store');
+            $photo_url = '';
 
             if ($this->request->getFile('logo')) {
                 $file_path = 'public/assets/uploads/apps/';
@@ -237,6 +246,7 @@ class ManageAppLinks extends BaseController
 
             $data = array(
                 'name'          => $name,
+                'description'   => $description,
                 'logo'          => $photo_url ? $photo_url : '',
                 'app_store'     => $app_store,
                 'play_store'    => $play_store,
@@ -355,6 +365,7 @@ class ManageAppLinks extends BaseController
 
         $app_id            =  $this->request->getVar('app_id');
         $name               =  $this->request->getVar('name') ? $this->request->getVar('name') : '';
+        $description       =  $this->request->getVar('description') ? $this->request->getVar('description') : '';
         $app_store          =  $this->request->getVar('app_store') ? $this->request->getVar('app_store') : '';
         $play_store         =  $this->request->getVar('play_store') ? $this->request->getVar('play_store') : '';
 
@@ -379,6 +390,12 @@ class ManageAppLinks extends BaseController
                 ]
             ],
             'name' => [
+                'rules'         =>  'required',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                ]
+            ],
+            'description' => [
                 'rules'         =>  'required',
                 'errors'        => [
                     'required'      =>  Lang('Language.required'),
@@ -445,6 +462,7 @@ class ManageAppLinks extends BaseController
 
             $data = [
                 'name'          =>    $name ? $name : $appDetails['name'],
+                'description'   =>    $description ? $description : $appDetails['description'],
                 'app_store'     =>    $app_store ? $app_store : $appDetails['app_store'],
                 'play_store'    =>    $play_store ? $play_store : $appDetails['play_store'],
                 'logo'         =>    $photo_url ? $photo_url : $appDetails['logo'],

@@ -20,6 +20,9 @@ class AppLinks extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 250,
             ],
+            'description' => [ 
+                'type' => 'TEXT',
+            ],
             'logo' => [ 
                 'type' => 'VARCHAR',
                 'constraint' => '250',

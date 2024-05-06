@@ -165,4 +165,10 @@ return [
 	'App Already Exists' => 'App Already Exists',
 	'App Link status changed successfully' => 'App Link status changed successfully',
 	'Unable to change App Link status, please try again' => 'Unable to change App Link status, please try again',
+
+	// Manage Audio
+	'Audio Not Found' => 'Audio Not Found',
+	'Audio status changed successfully' => 'Audio status changed successfully',
+	'Unable to change Audio status, please try again' => 'Unable to change Audio status, please try again',
+	'Only MP3 audio files are allowed.' => 'Only MP3 audio files are allowed.',
 ];

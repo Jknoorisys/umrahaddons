@@ -318,6 +318,7 @@ $routes->post('api/search-package', 'UserLists::searchPackage');
 $routes->post('api/full-package-by-city', 'UserLists::fullPackageListByCity');
 $routes->post('api/terms-conditions', 'UserLists::getTermsAndConditions');
 $routes->post('api/app-links', 'UserLists::getAppLinks');
+$routes->post('api/audio-files', 'UserLists::getAudioFiles');
 
 // Manage Cities By Javeriya kauser
 $routes->group('city', function ($routes) {
@@ -374,4 +375,13 @@ $routes->group('app-link', function ($routes) {
 	$routes->post('change-status', 'ManageAppLinks::changeStatus');
 	$routes->post('view', 'ManageAppLinks::view');
 	$routes->post('update', 'ManageAppLinks::edit');
+});
+
+$routes->group('audio', function ($routes) {
+	$routes->post('add', 'ManageAudioFiles::add');
+	$routes->post('delete', 'ManageAudioFiles::delete');
+	$routes->post('list', 'ManageAudioFiles::list');
+	$routes->post('change-status', 'ManageAudioFiles::changeStatus');
+	$routes->post('view', 'ManageAudioFiles::view');
+	$routes->post('update', 'ManageAudioFiles::edit');
 });

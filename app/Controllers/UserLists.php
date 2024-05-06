@@ -1328,4 +1328,87 @@ class UserLists extends BaseController
         }
     }
 
+    public function getAudioFiles()
+    {
+        $service           =  new Services();
+        $service->cors();
+
+        $pageNo           =  $this->request->getVar('pageNo');
+
+        $rules = [
+            'pageNo' => [
+                'rules'         =>  'required|greater_than[' . PAGE_LENGTH . ']|numeric',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                    'greater_than'  =>  Lang('Language.greater_than', [PAGE_LENGTH]),
+                    'numeric'       =>  Lang('Language.numeric', [$pageNo]),
+                ]
+            ],
+            'language' => [
+                'rules'         =>  'required|in_list[' . LANGUAGES . ']',
+                'errors'        => [
+                    'required'      =>  Lang('Language.required'),
+                    'in_list'       =>  Lang('Language.in_list', [LANGUAGES]),
+                ]
+            ],
+        ];
+
+        if(!$this->validate($rules)) {
+            return $service->fail(
+                [
+                    'errors'     =>  $this->validator->getErrors(),
+                    'message'   =>  lang('Language.invalid_inputs')
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+
+        try{
+            $currentPage   = ( !empty( $pageNo ) ) ? $pageNo : 1;
+            $offset        = ( $currentPage - 1 ) * PER_PAGE;
+            $limit         =  PER_PAGE;
+
+        
+            // By Query Builder
+            $db = db_connect();
+            $search = $this->request->getVar('search');
+
+            $table =  $audioData = $db->table('tbl_audio_files as s')
+            ->where('s.status', '1');
+
+            if(isset($search) && $search!=''){
+                $table->like('s.title', $search);
+            }
+
+            $audioData = $table->orderBy('s.id', 'DESC')
+                                ->limit($limit, $offset)
+                                ->get()->getResult();
+
+            $total =  $table->countAllResults();
+
+            return $service->success(
+                [
+                    'message'       =>  Lang('Language.list_success'),
+                    'data'          =>  [
+                        'total'             =>  $total,
+                        'audio_list'         =>  $audioData,
+                    ]
+                ],
+                ResponseInterface::HTTP_OK,
+                $this->response
+            );
+
+        } catch (Exception $e) {
+            return $service->fail(
+                [
+                    'errors'    =>  "",
+                    'message'   =>  Lang('Language.fetch_list'),
+                ],
+                ResponseInterface::HTTP_BAD_REQUEST,
+                $this->response
+            );
+        }
+    }
+
 }
